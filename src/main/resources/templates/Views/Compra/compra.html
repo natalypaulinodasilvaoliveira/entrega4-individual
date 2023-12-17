@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="icon" href="./assets/img/dunas.jpg" type="image/jpg" />
+	<link rel="stylesheet" href="./assets/css/stilo.css" />
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
+	<title> Viaje-CE | Compras </title>
+</head>
+
+<body>
+	<main>
+		<header class="header">
+			<h1> Compras </h1>
+		</header>
+
+		<ul class="nav justify-content-center">
+			<li class="nav-item">
+				<a class="nav-link active" aria-current="page" th:href="@{/}">Home</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" th:href="@{/usuarios}">Viajantes</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" th:href="@{/livros}">Destinos</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" th:href="@{/compras}">Compras</a>
+			</li>
+		</ul>
+
+		<section class="container">
+
+			<div class="p-4">
+				<button data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-primary mb-2 botao1"> Nova Compra </button>
+
+				<table class="table table-responsive table-hover">
+					<thead class="table-dark">
+						<tr>
+							<th scope="col">id</th>
+							<th scope="col">Data</th>
+							<th scope="col">Total</th>
+							<th scope="col">Destino</th>
+							<th scope="col">Viajante</th>
+							<th scope="col">Ações</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="c : ${compras}">
+							<td th:text="${c.id}"></td>
+							<td  th:text="${c.data_compra}"></td>
+							<td  th:text="${c.total_compra}"></td>
+							<td  th:text="${d.id}"></td>
+							<td  th:text="${v.viajante.nome}"></td>
+							<td>
+								<div class="d-flex">
+									<a th:href="@{'/compras'}" data-bs-toggle="modal"
+										th:data-bs-target="'#exampleModal' + ${d.id}" class="mx-1" title="Editar">
+										<i class="ri-file-edit-line"></i>
+									</a>
+									<a th:href="@{'/compras/' + ${c.id} + '/excluir'}" class="mx-1" title="Deletar"
+										onclick="return confirm('Deseja excluir o viajante ?')">
+										<i class="ri-delete-bin-2-line"></i>
+									</a>
+									
+									<!-- Modal -->
+									<div class="modal fade" th:id="'exampleModal' + ${c.id}" tabindex="-1"
+										aria-labelledby="exampleModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h1 class="modal-title fs-5" id="exampleModalLabel"> Atualizar </h1>
+													<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+												</div>
+												<div class="modal-body">
+													<form th:action="@{/compras/cadastrar}" method="post" th:object="${compras}">
+
+														<input type="hidden" id="id" name="id" class="form-control" th:value="${d.id}" />
+														<div class="form-group mb-3">
+															<label for="data" class="form-label"> Data </label> 
+															<input type="text" id="data" name="data_compra"  class="form-control" th:value="${c.data_compra}" />
+														</div>
+														<div class="form-group mb-3">
+															<label for="livro" class="form-label"> Destino </label> 
+															<select id="livro" name="d.id"  class="form-control">
+																<option th:value="${d.id}" th:text="${d.id}"></option>
+																<option th:each="l : ${listaDestinos}" th:value="${d.id}" th:text="${d.id}"></option>
+															</select>
+														</div>
+														<div class="form-group mb-3">
+															<label for="viajante" class="form-label"> Viajante </label> 
+															<select id="viajante" name="viajante.id"class="form-control">
+																<option th:value="${c.viajante.id}" th:text="${c.viajante.nome}"></option>
+																<option th:each="u : ${listaViajantes}" th:value="${v.id}" th:text="${v.nome}"></option>
+															</select>
+														</div>
+														
+														<button type="submit" class="btn btn-primary">Enviar</button>
+														<a href="./compras" class="btn btn-danger" style="margin-left: 10px"> Cancelar </a>
+													</form>
+												</div>
+
+											</div>
+										</div>
+									</div>
+
+								</div>
+							</td>
+						</tr>
+
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="exampleModalLabel"> Cadastrar </h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form th:action="@{/compras/cadastrar}" method="post" th:object="${compras}">
+
+							<div class="form-group mb-3">
+								<label for="data" class="form-label"> Data </label> 
+								<input type="text" id="data" name="data_compra"  class="form-control" value="" />
+							</div>
+							<!-- <div class="form-group mb-3">
+								<label for="total" class="form-label"> Total </label> 
+								<input type="text" id="total" name="total_compra"  class="form-control" value="" />
+							</div> -->
+							<div class="form-group mb-3">
+								<label for="destino" class="form-label"> Destino </label> 
+								<select id="destino" name="destino.id"  class="form-control">
+									<option value="DEFAULT">Escolha um Destino</option> 
+									<option th:each="l : ${listaDestinos}" th:value="${d.id}" th:text="${d.id}"></option>
+								</select>
+							</div>
+							<div class="form-group mb-3">
+								<label for="viajante" class="form-label"> Viajante </label> 
+								<select id="viajante" name="viajante.id"class="form-control">
+									<option value="DEFAULT">Escolha um Viajante</option>
+									<option th:each="v : ${listaViajantes}" th:value="${v.id}" th:text="${v.nome}"></option>
+								</select>
+							</div>
+							
+							<button type="submit" class="btn btn-primary">Enviar</button>
+							<a href="./compras" class="btn btn-danger" style="margin-left: 10px"> Cancelar </a>
+						</form>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+	</main>
+	<footer>
+		<img src="./assets/img/jericoacoara.jpeg" alt="Praia de Jericoacoara" />
+	</footer>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>
